@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Component - A simple component control</title>
+<script type="text/javascript" src="bui.js"></script>
+<script type="text/javascript" src="control.js"></script>
+<script type="text/javascript" src="component.js"></script>
+<script type="text/javascript">
+<!--
+var haiyang = {id:'haiyang',controlMap:{}};
+function doit() {
+    
+    bui.Control.init(document.getElementById('aa'),{});
+    var nc = bui.Control.create( 'Component', {id:'ff',type:'Component'});
+    nc.appendTo(window);
+}
+
+//-->
+</script>
+</head>
+
+<body><button type="button" onclick="doit()">doit</button>
+<div id="aa">
+<div ui="type:Component;id:bb" >
+    <div ui="type:Component;id:cc" >
+        <div ui="type:Component;id:dd" >
+        </div>
+    </div>
+</div>
+</div>
+</body>
+
+</html>
