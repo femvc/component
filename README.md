@@ -1,7 +1,19 @@
 asyque
 ======
 
-A simple asynchronous framework. There is an example.
+A simple asynchronous framework. There is an example.  
+
+###Part One
+
+Create controls: 
+Use template and bui.Control.init()
+Create a control:
+use bui.Control.create();
+
+###Attention
+When user create a control, if not set 'action' the frame will default save the control to window.controlMap (if not exist, frame will auto create) 
+
+
 
 ```
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -9,44 +21,19 @@ A simple asynchronous framework. There is an example.
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>asyque - A simple asynchronous framework</title>
-<script type="text/javascript" src="asyque.js"></script>
+<title>Component - A simple component control</title>
+<script type="text/javascript" src="bui.js"></script>
+<script type="text/javascript" src="control.js"></script>
+<script type="text/javascript" src="component.js"></script>
 <script type="text/javascript">
 <!--
+var haiyang = {id:'haiyang',controlMap:{}};
 function doit() {
-    var que1 = new bui.asyque();
-    que1.push(a);
-    que1.push(d); 
-    window.setTimeout(function(){
-        que1.next();
-    },400);
-}
-
-function a(callback) {
-    alert('a');
-    
-    //异步嵌套示例
-    var que2 = new bui.asyque();
-    que2.push(b);
-    que2.push(c);
-    
-    que2.push(callback); 
-
-    window.setTimeout(function(){
-        que2.next();
-    },400);
-}
-function b(callback) {
-    alert('b');
-    callback&&callback();
-}
-function c(callback) {
-    alert('c');
-    callback&&callback();
-}
-function d(callback) {
-    alert('d');
-    callback&&callback();
+    bui.Control.init(document.getElementById('aa'));
+    //bui.Control.init(document.getElementById('aa'),{},haiyang);
+    var nc = bui.Control.create('Component', {id:'ff',type:'Component'});
+    nc.appendTo(window);
+    //window.controlMap.bb.appendTo(nc);
 }
 
 //-->
@@ -54,7 +41,14 @@ function d(callback) {
 </head>
 
 <body><button type="button" onclick="doit()">doit</button>
-
+<div id="aa">
+<div ui="type:Component;id:bb" >
+    <div ui="type:Component;id:cc" >
+        <div ui="type:Component;id:dd" >
+        </div>
+    </div>
+</div>
+</div>
 </body>
 
 </html>
