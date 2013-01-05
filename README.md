@@ -1,7 +1,7 @@
-asyque
+component
 ======
 
-A simple asynchronous framework. There is an example.  
+A simple component control. There is an example.  
 
 ###Part One
 
