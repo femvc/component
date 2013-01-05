@@ -11,10 +11,11 @@
 <!--
 var haiyang = {id:'haiyang',controlMap:{}};
 function doit() {
-    
-    bui.Control.init(document.getElementById('aa'),{});
-    var nc = bui.Control.create( 'Component', {id:'ff',type:'Component'});
+    bui.Control.init(document.getElementById('aa'));
+    //bui.Control.init(document.getElementById('aa'),{},haiyang);
+    var nc = bui.Control.create('Component', {id:'ff',type:'Component'});
     nc.appendTo(window);
+    //window.controlMap.bb.appendTo(nc);
 }
 
 //-->
