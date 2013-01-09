@@ -121,4 +121,5 @@ bui.Component.prototype = {
     }
 };
 /*通过bui.Control派生bui.Button*/
-bui.Control.derive(bui.Component);
+//bui.Control.derive(bui.Component);
+bui.inherits(bui.Component, bui.Control);

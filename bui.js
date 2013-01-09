@@ -39,3 +39,18 @@ bui.fn = function(func, scope){
         return fn.apply(scope || fn, args);
     };
 };
+
+
+bui.inherits = function (child, parent) {
+    var key, 
+        childProperty = child.prototype, 
+        clazz = new Function();
+    
+    clazz.prototype = parent.prototype;
+    child.prototype = new clazz();
+    for (key in childProperty) {
+        child.prototype[key] = childProperty[key];
+    }
+    child.prototype.constructor = child;
+    child.superClass = parent.prototype;
+};

@@ -10,12 +10,18 @@
  */
 
 bui.Control = function ( options ) {
-    //状态列表
-    this.state = {};
     //指向父控件
-    this.parentControl = null;
-    // 子控件容器
-    this.controlMap = {};
+    if ( this.parentControl === undefined ) {
+        this.parentControl = null;
+    }
+    //子控件列表 注:如果子控件不再包含子控件可以在子控件的构造函数里设置hasControlMap=false;
+    if ( this.hasControlMap !== false ) {
+        this.controlMap = {};
+    }
+    //状态列表
+    if ( !this.state ) {
+        this.state = {};
+    }
     // 初始化参数
     this.initOptions( options );
     // 生成控件id
@@ -25,6 +31,25 @@ bui.Control = function ( options ) {
 };
 
 bui.Control.prototype = {
+    /**
+     * 初始化参数
+     * 
+     * @protected
+     * @param {Object} options 参数集合
+     */
+    initOptions: function ( options ) {
+        for ( var k in options ) {
+            if (this[ k ] == undefined) {
+                this[ k ] = options[ k ];
+            }
+        }
+    },
+    /**
+     * 子控件列表
+     *
+     * @comment 注: 不能放在这里,放在这里会导致"原型继承属性只是用一个副本的坑"!!
+     */ 
+    //controlMap: {},
     /**
      * 获取dom子部件的css class
      *
@@ -71,17 +96,7 @@ bui.Control.prototype = {
     getValue:   new Function(),
     setName:    new Function(),
     setValue:   new Function(),
-    /**
-     * 初始化参数
-     * 
-     * @protected
-     * @param {Object} options 参数集合
-     */
-    initOptions: function ( options ) {
-        for ( var k in options ) {
-            this[ k ] = options[ k ];
-        }
-    },
+
 
     /**
      * 初始化状态事件
@@ -440,7 +455,7 @@ bui.Control.prototype = {
                 if (elem && elem.getAttribute && elem.control) {
                     control = bui.Control.get(elem.control, opt_action);
                     //将控件从临时容器移动到指定控件下
-                    bui.Control.prototype.appendControl.call(control, uiObj);
+                    bui.Control.appendControl(control, uiObj);
                     break;
                 }
                 else {
@@ -453,7 +468,7 @@ bui.Control.prototype = {
             }
         }
         else if (wrap && wrap.controlMap) {
-            bui.Control.prototype.appendControl.call(wrap, uiObj);
+            bui.Control.appendControl(wrap, uiObj);
             if (uiObj.main) {
                 control = wrap;
                 while (control) {
@@ -466,22 +481,6 @@ bui.Control.prototype = {
                 container.appendChild(uiObj.main);
             }
         }
-    },
-    /**
-     * 父控件添加子控件
-     *
-     * @param {Control} uiObj 子控件.
-     */
-    appendControl : function(uiObj) {
-        var parentControl = this;
-        if (uiObj.parentControl && uiObj.parentControl.controlMap) {
-            uiObj.parentControl.controlMap[uiObj.id] = undefined;
-            delete uiObj.parentControl.controlMap[uiObj.id];
-        }
-        
-        parentControl.controlMap[uiObj.id] = uiObj;
-        //通过parentControl标识是否为根控件 null:子控件;object:根控件
-        uiObj.parentControl = parentControl;
     },
     /**
      * 获取当前控件所在Action实例
@@ -709,7 +708,7 @@ bui.Control.create = function ( type, options, main, opt_action) {
             elem = elem.parentNode;
             if (elem && elem.getAttribute && elem.control) {
                 control = bui.Control.get(elem.control, opt_action);
-                bui.Control.prototype.appendControl.call(control, uiObj);
+                bui.Control.appendControl(control, uiObj);
                 break;
             }
         }
@@ -717,14 +716,6 @@ bui.Control.create = function ( type, options, main, opt_action) {
         //bui.Control.elemList.push(uiObj);
         //设计用来集中缓存索引,最后发现不能建,建了垃圾回收会有问题!!
         uiObj = uiObj;
-        //根控件需要放置在action.controlMap中
-        /*if (uiObj.parentControl && uiObj.parentControl.controlMap ){
-            if (uiObj.parentControl.controlMap[ objId ] && window.console && window.console.log){
-                window.console.log('Control "' + objId + '" already exist.');
-            }
-            
-            uiObj.parentControl.controlMap[ objId ] = uiObj;
-        }*/
         
         if ( uiObj.main ) {
             // 每个控件渲染开始的时间。
@@ -742,6 +733,23 @@ bui.Control.create = function ( type, options, main, opt_action) {
         
     }    
     return uiObj;
+};
+
+/**
+ * 父控件添加子控件
+ *
+ * @param {Control} uiObj 子控件.
+ */
+bui.Control.appendControl = function(parent, uiObj) {
+    if (uiObj.parentControl && uiObj.parentControl.controlMap) {
+        uiObj.parentControl.controlMap[uiObj.id] = undefined;
+        delete uiObj.parentControl.controlMap[uiObj.id];
+    }
+    var index = uiObj.id;
+    //!!!悲催的案例,如果将controlMap放在prototype里, 这里parent.controlMap===uiObj.controlMap!!!
+    parent.controlMap[index] = uiObj;
+    //重置parentControl标识
+    uiObj.parentControl = parent;
 };
 
 /**
